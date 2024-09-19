@@ -11,12 +11,12 @@ const doctor = require("../models/doctor");
 const prescriptions = require("../models/prescriptions");
 const reviews = require("../models/reviews");
 const authenticate=require("../middleware/auth")
-
+require("dotenv").config()
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "piyushpatil4270@gmail.com",
-    pass: "zymz tuhd qocf kqfo",
+    user: process.env.User_Email,
+    pass: process.env.User_Pass,
   },
 });
 

@@ -16,6 +16,10 @@ const appointments=sequelize.define("documents",{
     document:{
         type:Sequelize.STRING,
         allowNull:false
+    },
+    documentKey:{
+        type:Sequelize.TEXT,
+        allowNull:false
     }
 },{
     timestamps:false
