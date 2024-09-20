@@ -35,9 +35,22 @@ const getPatientsPrescriptions=async(req,res,next)=>{
         .endOf("day")
         .toDate();
         console.log("Start ",startDate," ","End ",endDate)
-        const allPrescriptions=await appointments.findAll({attributes:['id','time'],where:{patientId:patientId,date:{[Op.between]:[startDate,endDate]},status:"Successful"},include: [{
-            model: doctor,attributes:['firstname','lastname','email']},
-            {model:prescriptions}]})
+        const allPrescriptions = await prescriptions.findAll({
+            attributes: ['id', 'date'],
+            where: {
+              patientId: patientId,
+              date: {
+                [Op.between]: [startDate, endDate]
+              }
+            },
+            include: [
+              {
+                model: doctor,  
+                attributes: ['firstname', 'lastname', 'email']
+              }
+            ]
+          });
+          
         res.status(202).json(allPrescriptions)
       
     } catch (error) {

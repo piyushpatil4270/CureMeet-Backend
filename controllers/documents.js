@@ -1,7 +1,7 @@
 
 const document=require("../models/documents")
 
-const { uploadS3Object, deleteFileFromS3 } = require("../aws")
+const { uploadS3Object, deleteFileFromS3 } = require("../services/aws")
 
 
 const deleteDocument=async(req,res,next)=>{

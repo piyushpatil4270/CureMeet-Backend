@@ -4,7 +4,7 @@ const slots = require("../models/slots")
 const {Op}=require("sequelize")
 const authenticate = require("../middleware/auth")
 const doctor = require("../models/doctor")
-const { createSlotsForMonth } = require("../utils/createSlots")
+const { createSlotsForMonth } = require("../services/slots")
 
 
 

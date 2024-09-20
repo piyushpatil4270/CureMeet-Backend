@@ -17,7 +17,7 @@ const reviewsRouter=require("./router/reviews")
 const documentRouter=require("./router/documents")
 const path=require("path")
 
-const {CronJob} =require("./utils/createSlots")
+const {CronJob} =require("./services/slots")
 
 
 const app = express();

@@ -1,6 +1,6 @@
 const appointments = require("../models/appointments");
 const moment = require("moment");
-const nodemailer = require("nodemailer");
+
 const patient = require("../models/patient");
 const slots = require("../models/slots");
 const { Sequelize, Op, where } = require("sequelize");
@@ -8,15 +8,9 @@ const cron = require("node-cron");
 const doctor = require("../models/doctor");
 const prescriptions = require("../models/prescriptions");
 const reviews = require("../models/reviews");
-
+const {sendEmail}=require("../services/appointment")
 require("dotenv").config()
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.User_Email,
-    pass: process.env.User_Pass,
-  },
-});
+
 
 const getAllMonths = () => {
   const months = [];
@@ -30,15 +24,7 @@ const getAllMonths = () => {
   return months;
 };
 
-function sendEmail(mailOptions) {
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log("Error sending email:", error);
-    } else {
-      console.log("Email sent successfully:", info.response);
-    }
-  });
-}
+
 
 
 const bookAppointment=async (req, res) => {

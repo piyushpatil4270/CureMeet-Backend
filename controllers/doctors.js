@@ -20,7 +20,9 @@ const getDoctor=async(req,res,next)=>{
           ]})
 
           const ratings=await reviews.findAll({
-            attributes:[[Sequelize.fn("Sum",Sequelize.col("rating")),"totalRating"],[Sequelize.fn("Count",Sequelize.col("id")),"totalCount"]]
+            attributes:[[Sequelize.fn("Sum",Sequelize.col("rating")),"totalRating"],[Sequelize.fn("Count",Sequelize.col("id")),"totalCount"]],
+            where:{doctorId:docId}
+
           })
         res.status(202).json({doctor:doc,reviews:docReviews,rating:ratings})
 
