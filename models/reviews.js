@@ -2,7 +2,7 @@ const sequelize=require("../utils/db")
 const Sequelize=require("sequelize")
 
 
-const reviews=sequelize.define("Reviews",{
+const reviews=sequelize.define("reviews",{
     id:{
         type:Sequelize.INTEGER,
         autoIncrement:true,

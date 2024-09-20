@@ -2,7 +2,7 @@ const sequelize=require("../utils/db")
 const Sequelize=require("sequelize")
 
 
-const slots=sequelize.define("Slots",{
+const slots=sequelize.define("slots",{
 id:{
     type:Sequelize.INTEGER,
     autoIncrement:true,

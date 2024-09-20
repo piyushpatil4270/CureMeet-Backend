@@ -58,6 +58,11 @@ db.sync()
     .catch((err) => console.log("Error: ", err));
 
 
+app.get("/",(req,res,next)=>{
+    res.status(202).json("We are live...")
+})
+
+
 app.use("/auth", authRouter);
 app.use("/slots", slotRouter);
 app.use("/appointments", appointmentRouter);

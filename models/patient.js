@@ -2,7 +2,7 @@ const sequelize=require("../utils/db")
 const Sequelize=require("sequelize")
 
 
-const patient=sequelize.define("Patient",{
+const patient=sequelize.define("patients",{
     id:{
         type:Sequelize.INTEGER,
         autoIncrement:true,
