@@ -19,7 +19,7 @@ const deleteDocument=async(req,res,next)=>{
 
 const getAllDocuments=async(req,res,next)=>{
     try {
-        const {userId}=req.body
+        const userId=req.user.id
         const documents=await document.findAll({where:{patientId:userId}})
         res.status(202).json(documents)
     } catch (error) {
@@ -48,4 +48,16 @@ const createDocument=async(req,res,next)=>{
     }
 }
 
-module.exports={createDocument,getAllDocuments,deleteDocument}
+
+
+getDocumentsForAppointment=async(req,res,next)=>{
+    try {
+        const {userId}=req.body
+        const documents=await document.findAll({where:{patientId:userId}})
+        res.status(202).json(documents)
+    } catch (error) {
+        console.log("Error: ",error)
+        res.status(404).json("An error occured try again")
+    }
+}
+module.exports={createDocument,getAllDocuments,deleteDocument,getDocumentsForAppointment}
