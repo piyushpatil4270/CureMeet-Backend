@@ -48,8 +48,13 @@ const getPatientsPrescriptions=async(req,res,next)=>{
                 attributes: ['firstname', 'lastname', 'email']
               }
             ],
-            group: ['appointmentId', 'prescriptions.id', 'prescriptions.doctorId', 'prescriptions.patientId', 'prescriptions.details', 'prescriptions.date', 'doctor.id', 'doctor.firstname', 'doctor.lastname', 'doctor.email']
+            attributes: [
+              'appointmentId',
+              [Sequelize.fn('COUNT', Sequelize.col('id')), 'prescriptionCount'] 
+            ],
+            group: ['appointmentId', 'doctor.id'] 
           });
+          
           
           
           
