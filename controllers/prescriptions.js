@@ -48,9 +48,9 @@ const getPatientsPrescriptions=async(req,res,next)=>{
                 attributes: ['firstname', 'lastname', 'email']
               }
             ],
-            group: ['appointmentId'],
-            raw: true // This avoids Sequelize object mapping
+            group: ['appointmentId', 'prescriptions.id', 'prescriptions.doctorId', 'prescriptions.patientId', 'prescriptions.details', 'prescriptions.date', 'doctor.id', 'doctor.firstname', 'doctor.lastname', 'doctor.email']
           });
+          
           
           
         res.status(202).json(allPrescriptions)
