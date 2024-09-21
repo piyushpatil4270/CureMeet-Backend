@@ -36,7 +36,6 @@ const getPatientsPrescriptions=async(req,res,next)=>{
         .toDate();
         console.log("Start ",startDate," ","End ",endDate)
         const allPrescriptions = await prescriptions.findAll({
-            
             where: {
               patientId: patientId,
               date: {
@@ -45,12 +44,14 @@ const getPatientsPrescriptions=async(req,res,next)=>{
             },
             include: [
               {
-                model: doctor,  
+                model: doctor,
                 attributes: ['firstname', 'lastname', 'email']
               }
             ],
-            group: ['appointmentId']
+            group: ['appointmentId'],
+            raw: true // This avoids Sequelize object mapping
           });
+          
           
         res.status(202).json(allPrescriptions)
       
