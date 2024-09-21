@@ -40,29 +40,22 @@ const getPatientsPrescriptions=async(req,res,next)=>{
             where: {
               patientId: patientId,
               date: {
-                [Op.between]: [startDate, endDate]
+                [Op.between]: [startDate, endDate]  // Filter by date range
               }
             },
             include: [
               {
                 model: doctor,
-                attributes: ['firstname', 'lastname', 'email']
-              },
-              {
-                model: appointments,
-                attributes: ['Date']
+                attributes: ['firstname', 'lastname', 'email']  // Include doctor details
               }
             ],
             attributes: [
-              'prescriptions.appointmentId',  // Explicitly reference prescriptions table
-              'prescriptions.details',        // Explicitly reference prescriptions table
-              [Sequelize.fn('COUNT', Sequelize.col('prescriptions.id')), 'prescriptionCount'], // Count of prescriptions.id
-              'doctor.id', 
-              'doctor.firstname',
-              'doctor.lastname',
-              'doctor.email'
+              'appointmentId',  // Group by appointment ID
+              [Sequelize.fn('GROUP_CONCAT', Sequelize.col('details')), 'prescriptionDetails'],  // Concatenate prescription details
+              'date'  // Include the prescription date
             ],
-            group: ['prescriptions.appointmentId', 'doctor.id', 'prescriptions.details', 'doctor.firstname', 'doctor.lastname', 'doctor.email'] // Group by all non-aggregated fields
+            group: ['appointmentId', 'date', 'doctor.id'],  // Group by appointmentId and date
+            order: [['date', 'ASC']]  // Order by date (if needed)
           });
           
           
