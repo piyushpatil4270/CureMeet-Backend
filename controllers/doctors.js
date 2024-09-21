@@ -12,12 +12,18 @@ const getDoctor=async(req,res,next)=>{
         const {id}=req.params
         const docId=parseInt(id)
         const doc=await doctor.findByPk(docId)
-        const docReviews=await reviews.findAll({where:{doctorId:docId},limit:5,include: [
-            {
-              model: patients,
-              attributes: ['firstName'] 
-            }
-          ]})
+        const docReviews = await reviews.findAll({
+            where: { doctorId: docId },
+            limit: 5,
+            include: [
+              {
+                model: patients,
+                attributes: ['firstName']
+              }
+            ],
+            order: [['rating', 'ASC']] 
+          });
+          
 
           const ratings=await reviews.findAll({
             attributes:[[Sequelize.fn("Sum",Sequelize.col("rating")),"totalRating"],[Sequelize.fn("Count",Sequelize.col("id")),"totalCount"]],

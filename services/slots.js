@@ -2,6 +2,8 @@ const moment = require("moment/moment")
 const slots=require("../models/slots")
 const doctor = require("../models/doctor")
 const cron=require("node-cron")
+const {Op}=require("sequelize")
+const sequelize = require("../utils/db")
 
 const createSlotsForDoctor=async(doctoId,date)=>{
     try {
@@ -42,6 +44,23 @@ const createSlotsForDoctor=async(doctoId,date)=>{
 }
 
 
+const deleteRedundantSlots=async()=>{
+  try {
+    const date=moment.utc().subtract(1,"day")
+    const startDate = moment(date)
+        .startOf("day")
+        .format("YYYY-MM-DD HH:mm:ss");
+      const endDate = moment(date)
+        .endOf("day")
+        .format("YYYY-MM-DD HH:mm:ss");
+    await slots.destroy({where:{date:{
+      [Op.between]: [startDate, endDate]
+    }}})
+  } catch (error) {
+    console.log("Error occured while deleting slots :",error)
+  }
+}
+
 
 async function CronJob(){
     cron.schedule('0 0 1 * *', async () => {
@@ -59,6 +78,8 @@ async function CronJob(){
           }
       
           console.log('Slots for doctors created successfully');
+          await deleteRedundantSlots()
+          console.log('Redundant slots deleted')
         } catch (error) {
           console.error('Error while creating slots:', error);
         }
