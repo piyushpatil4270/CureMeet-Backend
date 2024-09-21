@@ -57,7 +57,7 @@ const getPatientsPrescriptions=async(req,res,next)=>{
       
     } catch (error) {
         console.log("Error: ",error)
-        res.status(404).json("An error occured try again")
+        res.status(404).json(error)
     }
 }
 
