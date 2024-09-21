@@ -49,22 +49,22 @@ const getPatientsPrescriptions=async(req,res,next)=>{
                 attributes: ['firstname', 'lastname', 'email']
               },
               {
-                model:appointments,
-                attributes:['Date']
+                model: appointments,
+                attributes: ['Date']
               }
             ],
             attributes: [
-              'appointmentId',
-            
-              'details',
+              'prescriptions.appointmentId',  // Explicitly reference prescriptions table
+              'prescriptions.details',        // Explicitly reference prescriptions table
               [Sequelize.fn('COUNT', Sequelize.col('prescriptions.id')), 'prescriptionCount'], // Count of prescriptions.id
               'doctor.id', 
               'doctor.firstname',
               'doctor.lastname',
               'doctor.email'
             ],
-            group: ['appointmentId', 'doctor.id']
+            group: ['prescriptions.appointmentId', 'doctor.id', 'prescriptions.details', 'doctor.firstname', 'doctor.lastname', 'doctor.email'] // Group by all non-aggregated fields
           });
+          
           
           
           
