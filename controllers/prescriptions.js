@@ -36,7 +36,7 @@ const getPatientsPrescriptions=async(req,res,next)=>{
         .toDate();
         console.log("Start ",startDate," ","End ",endDate)
         const allPrescriptions = await prescriptions.findAll({
-            attributes: ['id', 'date'],
+            
             where: {
               patientId: patientId,
               date: {

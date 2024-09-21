@@ -37,8 +37,7 @@ const bookAppointment=async (req, res) => {
         "DD-MMMM-YYYY HH:mm:ss"
       );
       const reminderDateTime = moment(appointmentDateTime).subtract(30, "minutes").format("m H * * *");
-      console.log(appointmentDateTime)
-      console.log("Remainder-Time ",moment(appointmentDateTime).subtract(15, "minutes").toString())
+
       
   
       if (!docEmail) return res.status(404).json("Doctor doesnt exist");
