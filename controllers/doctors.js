@@ -21,7 +21,7 @@ const getDoctor=async(req,res,next)=>{
                 attributes: ['firstName']
               }
             ],
-            order: [['rating', 'ASC']] 
+            order: [['rating', 'DESC']] 
           });
           
 
