@@ -48,7 +48,8 @@ const getPatientsPrescriptions=async(req,res,next)=>{
                 model: doctor,  
                 attributes: ['firstname', 'lastname', 'email']
               }
-            ]
+            ],
+            group: ['appointmentId']
           });
           
         res.status(202).json(allPrescriptions)
