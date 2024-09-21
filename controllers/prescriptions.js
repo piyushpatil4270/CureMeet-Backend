@@ -3,6 +3,7 @@ const patients=require("../models/patient")
 const { where, Op } = require("sequelize")
 const doctor = require("../models/doctor")
 const moment=require("moment")
+const Sequelize=require("sequelize")
 const appointments = require("../models/appointments")
 
 
