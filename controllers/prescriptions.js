@@ -47,11 +47,15 @@ const getPatientsPrescriptions=async(req,res,next)=>{
               {
                 model: doctor,
                 attributes: ['firstname', 'lastname', 'email']
+              },
+              {
+                model:appointments,
+                attributes:['Date']
               }
             ],
             attributes: [
               'appointmentId',
-              'date',
+            
               'details',
               [Sequelize.fn('COUNT', Sequelize.col('prescriptions.id')), 'prescriptionCount'], // Count of prescriptions.id
               'doctor.id', 
