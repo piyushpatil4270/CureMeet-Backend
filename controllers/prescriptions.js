@@ -5,18 +5,13 @@ const doctor = require("../models/doctor")
 const moment=require("moment")
 const Sequelize=require("sequelize")
 const appointments = require("../models/appointments")
+const { handleCreatePrescription, handleGetDoctorPrescriptions } = require("../services/prescriptions")
 
 
 
 const createPrescription=async(req,res,next)=>{
     try {
-        const {doctorId,patientId,appointmentId,details}=req.body
-        const newPresc=await prescriptions.create({
-            appointmentId:appointmentId,
-            doctorId:doctorId,
-            patientId:patientId,
-            details:details
-        })
+        const result=await handleCreatePrescription(req.body,req.user.id)
         res.status(202).json("Prescrption added successfully")
         
     } catch (error) {
@@ -40,22 +35,22 @@ const getPatientsPrescriptions=async(req,res,next)=>{
             where: {
               patientId: patientId,
               date: {
-                [Op.between]: [startDate, endDate]  // Filter by date range
+                [Op.between]: [startDate, endDate]  
               }
             },
             include: [
               {
                 model: doctor,
-                attributes: ['firstname', 'lastname', 'email']  // Include doctor details
+                attributes: ['firstname', 'lastname', 'email']  
               }
             ],
             attributes: [
-              'appointmentId',  // Group by appointment ID
-              [Sequelize.fn('GROUP_CONCAT', Sequelize.col('details')), 'prescriptionDetails'],  // Concatenate prescription details
-              'date'  // Include the prescription date
+              'appointmentId', 
+              [Sequelize.fn('GROUP_CONCAT', Sequelize.col('details')), 'prescriptionDetails'], 
+              'date' 
             ],
-            group: ['appointmentId', 'date', 'doctor.id'],  // Group by appointmentId and date
-            order: [['date', 'ASC']]  // Order by date (if needed)
+            group: ['appointmentId', 'date', 'doctor.id'],  
+            order: [['date', 'ASC']] 
           });
           
           
@@ -74,11 +69,8 @@ const getPatientsPrescriptions=async(req,res,next)=>{
 
 const getDoctorPrescriptions=async(req,res,next)=>{
     try {
-        const {doctorId}=req.body
-        const allPrescriptions=await prescriptions.findAll({where:{doctorId:doctorId},include: [{
-            model: patients,
-        }]})
-        res.status(202).json(allPrescriptions)
+        const result=await handleGetDoctorPrescriptions(req.body)
+        res.status(202).json(result)
     } catch (error) {
         console.log("Error: ",error)
         res.status(404).json("An error occured try again")

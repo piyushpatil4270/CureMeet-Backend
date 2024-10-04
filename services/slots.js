@@ -44,15 +44,11 @@ const createSlotsForDoctor=async(doctoId,date)=>{
 }
 
 
-const deleteRedundantSlots=async()=>{
+const deleteRedundantSlots=async(startDate,endDate)=>{
   try {
     const date=moment.utc().subtract(1,"day")
-    const startDate = moment(date)
-        .startOf("day")
-        .format("YYYY-MM-DD HH:mm:ss");
-      const endDate = moment(date)
-        .endOf("day")
-        .format("YYYY-MM-DD HH:mm:ss");
+    const startDate = moment.utc(date).startOf('month').toDate();
+    const endDate = moment.utc(date).endOf('month').toDate();
     await slots.destroy({where:{date:{
       [Op.between]: [startDate, endDate]
     }}})
@@ -63,7 +59,9 @@ const deleteRedundantSlots=async()=>{
 
 
 async function CronJob(){
-    cron.schedule('0 0 1 * *', async () => {
+ 
+    cron.schedule('30 18 28-31 * *', async () => {
+      if (new Date().getDate() === 1) {
         try {
           console.log('Scheduler running: Creating slots for the new month');
           
@@ -76,13 +74,15 @@ async function CronJob(){
           for (const doc of docs) {
             await createSlotsForMonth(doc.id, startDate, endDate);
           }
-      
+         
           console.log('Slots for doctors created successfully');
-          await deleteRedundantSlots()
+         await deleteRedundantSlots()
           console.log('Redundant slots deleted')
         } catch (error) {
           console.error('Error while creating slots:', error);
         }
+      }
+        
       });
     
 }

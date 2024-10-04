@@ -1,4 +1,4 @@
-const secretKey="fskhkahkk88245fafjklakljfalk"
+require("dotenv").config()
 const doctor = require("../models/doctor")
 const patient = require("../models/patient")
 const jwt=require("jsonwebtoken")
@@ -8,7 +8,7 @@ const userType=req.header("userType")
 console.log(userType)
 if(!userToken) return res.status(400).json("You are not authorized to access the resources")
  try {
-        const decryptedToken=jwt.verify(userToken,secretKey)
+        const decryptedToken=jwt.verify(userToken,process.env.JWT_KEY)
         console.log("The decrypted token is ",userToken)
         const  userId=decryptedToken.userId
         console.log("USERID is ",userId)

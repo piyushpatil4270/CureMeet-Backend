@@ -29,7 +29,7 @@ router.post("/doctor/signin",doctorSignin)
 
 
 
-router.post("/patient/document",upload.single("file"),patientDocument)
+router.post("/patient/document",auth,upload.single("file"),patientDocument)
 router.post("/profile",auth,patientProfile)
 
 
