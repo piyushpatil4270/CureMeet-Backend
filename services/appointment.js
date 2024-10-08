@@ -98,7 +98,7 @@ exports.sendEmail=async(mailOptions)=>{
       if(!appointmentTimeSlot) return 2
       console.log("Appointment-time slot is ",appointmentTimeSlot.id)
       appointmentTimeSlot.isAvailable = false;
-      appointmentTimeSlot.changed('isAvailable', true); 
+      
       await appointmentTimeSlot.save();
       const newAppointment=await appointments.create({
         doctorId:doctorId,
