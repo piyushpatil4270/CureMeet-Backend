@@ -16,7 +16,7 @@ const { getSlots, updateSlots, createTimeSlots } = require("../controllers/slots
 router.post("/getSlots",authenticate,getSlots)
 
 
-router.post("/updateslots",authenticate,updateSlots)
+//router.post("/updateslots",authenticate,updateSlots)
 
 
 router.post("/createSlots",createTimeSlots)
