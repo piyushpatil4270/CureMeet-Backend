@@ -87,4 +87,4 @@ const createTimeSlots = async (req, res, next) => {
   }
 };
 
-module.exports = { createTimeSlots, updateSlots, getSlots };
+module.exports = { createTimeSlots,  getSlots };
