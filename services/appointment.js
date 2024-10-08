@@ -86,7 +86,7 @@ exports.sendEmail=async(mailOptions)=>{
         console.log("Day not found...")
         return 2
       }
-     
+     console.log("Currrent appointment date is => ",appointmentDate)
       console.log("Appointment day => ",appointmentDay.id)
       const appointmentTimeSlot=await timeSlot.findOne({
         where:{
