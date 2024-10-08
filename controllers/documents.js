@@ -17,8 +17,9 @@ const deleteDocument=async(req,res,next)=>{
 }
 
 const getAllDocuments=async(req,res,next)=>{
+    const transaction=await db.transaction()
     try {
-        const transaction=await db.transaction()
+        
         const userId=req.user.id
         const result=await handleGetAllDocuments(userId)
         res.status(202).json(result)
@@ -31,8 +32,9 @@ const getAllDocuments=async(req,res,next)=>{
 }
 
 const createDocument=async(req,res,next)=>{
+    const transaction=await db.transaction()
     try {
-        const transaction=await db.transaction()
+        
         const userId=req.user.id
         console.log("User is   " ,req.user.id)
         const result=await handleCreateDocument(userId,req.file)

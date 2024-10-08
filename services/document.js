@@ -25,7 +25,7 @@ exports.handleCreateDocument=async(patientId,file)=>{
    
         
         console.log("PatientId ",patientId)
-       const url= await uploadS3Object(file)
+        const url= await uploadS3Object(file)
        if(!url){
         return 1
        }
