@@ -33,7 +33,7 @@ const getSlots = async (req, res) => {
       res.status(404).json("Slot not found")
     }
     console.log("Current date is ",appointmentDate)
-    console.log("Slot id is ",appointmentDay.id)
+    console.log("Slot id is ",appointmentDay)
     const appointmentTime=await timeSlot.findAll({
       where:{
         daySlotId:appointmentDay.id
