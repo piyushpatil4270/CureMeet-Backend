@@ -6,6 +6,7 @@ const sequelize = new Sequelize(process.env.DB_NAME,process.env.DB_USER,process.
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: 'mysql',
+    timezone: '+05:30',
     dialectModule: require('mysql2'),
     dialectOptions: {
         ssl: {

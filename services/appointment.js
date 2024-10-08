@@ -1,5 +1,5 @@
 const appointments = require("../models/appointments");
-const moment = require("moment");
+const moment = require("moment-timezone");
 
 const patient = require("../models/patient");
 const slots = require("../models/slots");
@@ -26,6 +26,8 @@ const getAllMonths = () => {
 
 
 const nodemailer = require("nodemailer");
+const daySlot = require("../models/daySlot");
+const timeSlot = require("../models/timeSlot");
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -49,6 +51,7 @@ exports.sendEmail=async(mailOptions)=>{
 
   exports.handleBookAppointment=async(body,patientId)=>{
     const { doctorId, date, time}=body
+    console.log("Appointment date is => ",date)
    const user=await doctor.findOne({where:{id:doctorId}})
    const appointmentDateTime = moment(
     `${date} ${time}`,
@@ -68,47 +71,42 @@ exports.sendEmail=async(mailOptions)=>{
    
 
   });
-  const appointmentDate = moment.utc(date, "DD-MMMM-YYYY").toDate();
-  const appointmentTime = moment(time, "HH:mm:ss").format("HH:mm:ss");
-  const appointment = await appointments.create({
-    doctorId: doctorId,
-    patientId: patientId,
-    status: "Pending",
-    time: appointmentTime,
-    Date: appointmentDate,
-  });
-  const startDate = moment(date, "DD-MMMM-YYYY")
-        .startOf("day")
-        .format("YYYY-MM-DD HH:mm:ss");
-      const endDate = moment(date, "DD-MMMM-YYYY")
-        .endOf("day")
-        .format("YYYY-MM-DD HH:mm:ss");
-  
-      const slot = await slots.findOne({
-        where: {
-          doctorId: doctorId,
-          date: {
-            [Op.between]: [startDate, endDate],
-          },
-        },
-      });
-  
-      if (!slot) return 2;
-  
-      const availabilityMap = {
-        "10:00:00": "time10",
-        "11:00:00": "time11",
-        "12:00:00": "time12",
-        "13:00:00": "time13",
-        "14:00:00": "time14",
-        "15:00:00": "time15",
-        "16:00:00": "time16",
-        "17:00:00": "time17",
-      };
-  
-      const timeField = availabilityMap[appointmentTime];
-  
-      await slots.update({ [timeField]: false }, { where: { id: slot.id } });
+      
+      const appointmentDate = moment(date,"DD-MMMM-YYYY").format("YYYY-MM-DD 00:00:00");
+
+      const startDate=moment(appointmentDate).startOf("day")
+      const endDate=moment(appointmentDate).endOf("day")
+      const appointmentTime = moment(time, "HH:mm:ss").format("HH:mm:ss")
+      console.log("Date  of current appointment is  => ",appointmentDate," Time => ",appointmentTime)
+      const appointmentDay=await daySlot.findOne({
+        where:{doctorId:doctorId,appointmentDate:{ [Op.between]: [startDate, endDate] }},
+        
+      })
+      if(!appointmentDay) {
+        console.log("Day not found...")
+        return 2
+      }
+     
+      console.log("Appointment day => ",appointmentDay.id)
+      const appointmentTimeSlot=await timeSlot.findOne({
+        where:{
+         
+          daySlotId:appointmentDay.id,
+          slotTime:appointmentTime
+        }
+      })
+      if(!appointmentTimeSlot) return 2
+      console.log("Appointment-time slot is ",appointmentTimeSlot.id)
+      appointmentTimeSlot.isAvailable = false;
+      appointmentTimeSlot.changed('isAvailable', true); 
+      await appointmentTimeSlot.save();
+      const newAppointment=await appointments.create({
+        doctorId:doctorId,
+        patientId:patientId,
+        Date:appointmentDate,
+        time:appointmentTime,
+        status:"Pending"
+      })
       return 3
 
 
@@ -142,38 +140,38 @@ exports.handlegetDoctorAppointment=async(body)=>{
 
 
 exports.handleCancelAppointment=async(body)=>{
-const {doctorId,time,aptId}=body
+const {doctorId,time,aptId,date}=body
+
 const exAppointment=await appointments.findOne({where:{id:aptId}})
 if(!exAppointment) return 1
-const date=exAppointment.Date
+const appointmentDate=moment(date,"YYYY-MM-DD").format("YYYY-MM-DD")
+const startDate=moment(appointmentDate).startOf("day").format("YYYY-MM-DD HH:mm:ss")
+const endDate=moment(appointmentDate).endOf("day").format("YYYY-MM-DD HH:mm:ss")
+console.log(startDate," ",endDate)
+
 await exAppointment.destroy()
-const startDate = moment(date, "DD-MMMM-YYYY")
-.startOf("day")
-.format("YYYY-MM-DD HH:mm:ss");
-const endDate = moment(date, "DD-MMMM-YYYY")
-.endOf("day")
-.format("YYYY-MM-DD HH:mm:ss");
-const slot = await slots.findOne({
-  where: {
-    doctorId: doctorId,
-    date: {
-      [Op.between]: [startDate, endDate],
-    },
-  },
-});
-if(!slot) return 2
-const availabilityMap = {
-  "10:00:00": "time10",
-  "11:00:00": "time11",
-  "12:00:00": "time12",
-  "13:00:00": "time13",
-  "14:00:00": "time14",
-  "15:00:00": "time15",
-  "16:00:00": "time16",
-  "17:00:00": "time17",
-};
-const timeField=availabilityMap[time]
-await slots.update({[timeField]:true},{where:{id:slot.id}})
+const appointmentDaySlot=await daySlot.findOne({
+  where:{
+    doctorId:doctorId,
+    appointmentDate:{
+      [Op.between]:[startDate,endDate]
+    }
+  }
+})
+if(!appointmentDaySlot) return 1
+console.log("Date is ",date)
+console.log("Time is ",time)
+console.log("Day slot id is ",appointmentDaySlot.id)
+const appointmentTime=await timeSlot.findOne({
+  where:{
+    daySlotId:appointmentDaySlot.id,
+    slotTime:time
+  }
+})
+if(!appointmentTime) return 2;
+appointmentTime.isAvailable=true
+await appointmentTime.save()
+
 return 3
 }
 
@@ -215,7 +213,15 @@ exports.handlePatientAppointments=async(body,patientId)=>{
       { model: doctor, attributes: ["firstname", "lastname", "email", "id"] },
     ],
   });
-  return allAppointments
+  
+  const formattedAppointments=allAppointments.map((appointment)=>{
+    const appointmentData=appointment.toJSON();
+    return{
+      ...appointmentData, 
+    Date: moment.tz(appointment.Date, "Asia/Kolkata").format("YYYY-MM-DD HH:mm:ss"),
+    }
+  })
+  return formattedAppointments
 }
 
 

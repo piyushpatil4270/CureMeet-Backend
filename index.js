@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("./utils/db");
 const bodyParser = require("body-parser");
+const moment=require("moment")
 const cors = require("cors");
 const authRouter = require("./router/auth");
 const slotRouter = require("./router/slots");
@@ -17,7 +18,7 @@ const reviewsRouter=require("./router/reviews")
 const documentRouter=require("./router/documents")
 const path=require("path")
 
-const {CronJob} =require("./services/slots")
+const {CronJob, createSlotsForMonth, deleteRedundantSlots} =require("./services/slots")
 
 
 const app = express();
@@ -72,6 +73,14 @@ app.use("/reviews",reviewsRouter)
 app.use("/documents",documentRouter)
 
 
+
+
+
+
+
 CronJob()
+
+
+
 
 app.listen(5500, () => console.log("Server started on port 5500"));

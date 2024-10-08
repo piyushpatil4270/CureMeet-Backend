@@ -4,7 +4,7 @@ const sequelize = require("sequelize");
 const doctors = require("../models/doctor");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const db=require("../utils/db")
 const moment = require("moment");
 
 const document = require("../models/documents");
@@ -22,22 +22,24 @@ function generateToken(id) {
 
 const patientSignup = async (req, res, next) => {
   try {
-    
+    const transaction=await db.transaction()
     const result=await handlePatientSignup(req.body)
     if (result===1) {
       return res.status(200).json("Email already registered");
     }
    
     res.status(202).json("User registered succesfully");
+    await transaction.commit()
   } catch (error) {
     console.log("error: ", error);
     res.status(404).json("Something went wrong try again");
+    await transaction.rollback()
   }
 };
 
 const patientSignin = async (req, res, next) => {
   try {
-    
+    const transaction=await db.transaction()
    const result=await handlePatientSignin(req.body)
     if (result===1) {
       return res.status(200).json("User with email doesnt exist");
@@ -46,55 +48,69 @@ const patientSignin = async (req, res, next) => {
     res
       .status(202)
       .json(result);
+      await transaction.commit()
   } catch (error) {
     console.log("error: ", error);
     res.status(404).json("Something went wrong try again");
+    await transaction.rollback()
   }
 };
 
 const doctorProfile = async (req, res, next) => {
   try {
+    const transaction=await db.transaction()
     const result=await handleDoctorProfile(req.user.id,req.body)
     if(result===1) return res.status(404).json("User not found")
     res.status(202).json(result)
+  await transaction.commit()
      } catch (error) {
     console.log("Error: ", error);
     res.status(404).json("An error occured try again");
+    await transaction.rollback()
   }
 };
 
 const doctorSignup = async (req, res, next) => {
   try {
+    const transaction=await db.transaction()
     const result=await handleDoctorSignup(req.body,req.user.id)
     if(result===1) res.status(200).json("User with email already exist")
     res.status(202).json("Doctor registered succesfully");
+  await transaction.commit()
   } catch (error) {
     console.log("error: ", error);
     res.status(404).json("Something went wrong try again");
+    await transaction.rollback()
   }
 };
 
 const doctorSignin = async (req, res, next) => {
   try {
+    const transaction=await db.transaction()
      const result=await handleDoctorSignin(req.body)
      if(result===1) return res.status(200).json("User with email doesnt exist")
     if(result===2) return res.status(201).json("Password doesnt match")
     res
       .status(202)
       .json(result);
+      await transaction.commit()
   } catch (error) {
     console.log("error: ", error);
     res.status(404).json("Something went wrong try again");
+    await transaction.rollback()
   }
 };
 
 const patientDocument = async (req, res, next) => {
   try {
+    const transaction=await db.transaction()
     await handlePatientdocument(req.body)
     res.status(202).json("Document uploaded successfully");
+    await transaction.commit()
   } catch (error) {
     console.log("Error: ", error);
     res.status(404).json("An error occured try again");
+    await transaction.rollback()
   }
 };
 
@@ -102,35 +118,44 @@ const patientDocument = async (req, res, next) => {
 
 const patientProfile = async (req, res, next) => {
   try {
+    const transaction=await db.transaction()
     const userId = req.user.id;
     const result=await handlePatientsProfile(userId,req.body)
     if (!result) return res.status(202).json("User not found");
     res.status(202).json(result);
+    await transaction.commit()
   } catch (error) {
     console.log("Error: ", error);
     res.status(404).json("An error occured try again");
+    await transaction.rollback()
   }
 };
 
 const getPatientDocuments = async (req, res, next) => {
   try {
+    const transaction=await db.transaction()
     const userId = req.user.id;
     const result=await handlegetPatientDocuments(userId,req.body)
     res.status(202).json(result);
+    await transaction.commit()
   } catch (error) {
     console.log("Error: ", error);
     res.status(404).json(error);
+    await transaction.rollback()
   }
 };
 
 const getPatientData = async (req, res, next) => {
   try {
+    const transaction=await db.transaction()
     const userId = req.user.id;
     const result=await handlegetPatientData(userId,req.body)
     res.status(202).json(result);
+    await transaction.commit()
   } catch (error) {
     console.log("Error: ", error);
     res.status(404).json("An error occured try again");
+    await transaction.rollback()
   }
 };
 

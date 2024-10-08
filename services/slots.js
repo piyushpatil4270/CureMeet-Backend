@@ -4,22 +4,35 @@ const doctor = require("../models/doctor")
 const cron=require("node-cron")
 const {Op}=require("sequelize")
 const sequelize = require("../utils/db")
+const daySlot = require("../models/daySlot")
+const timeSlot = require("../models/timeSlot")
 
 const createSlotsForDoctor=async(doctoId,date)=>{
     try {
-        await slots.create({
-            doctorId:doctoId,
-            date:date,
-            time10: true,
-            time11: true,
-            time12: true,
-            time13: true,
-            time14: true,
-            time15: true,
-            time16: true,
-             time17:true,
-        })
-        console.log("Slot created successfully")
+
+     
+
+      const promises=[]
+    const currentDaySlot=  await daySlot.create({
+        doctorId:doctoId,
+        appointmentDate:date
+      })
+       let currentTime=moment("10:00","HH:ss")
+       let targetTime=moment("16:00","HH:ss")
+      while(currentTime<=targetTime){
+        const currSlotTime=currentTime.format("hh:mm:ss")
+        console.log(currSlotTime)
+        promises.push(
+          timeSlot.create({
+            daySlotId:currentDaySlot.id,
+            slotTime:currSlotTime,
+            isAvailable:true
+          })
+        )
+        currentTime.add(1,"hour")
+       } 
+      await Promise.all(promises)
+      console.log("Slot created successfully")
     } catch (error) {
     console.log(error)    
     }
@@ -44,14 +57,20 @@ const createSlotsForDoctor=async(doctoId,date)=>{
 }
 
 
-const deleteRedundantSlots=async(startDate,endDate)=>{
+const deleteRedundantSlots=async()=>{
   try {
     const date=moment.utc().subtract(1,"day")
     const startDate = moment.utc(date).startOf('month').toDate();
     const endDate = moment.utc(date).endOf('month').toDate();
-    await slots.destroy({where:{date:{
+    const previousSlots=await daySlot.findAll({where:{appointmentDate:{
       [Op.between]: [startDate, endDate]
     }}})
+    Promise.all(previousSlots.map(async(slot)=>{
+      await timeSlot.destroy({where:{
+       daySlotId:slot.id
+      }})
+      await daySlot.destroy({where:{id:slot.id}})
+    }))
   } catch (error) {
     console.log("Error occured while deleting slots :",error)
   }
@@ -87,4 +106,6 @@ async function CronJob(){
     
 }
 
-module.exports={createSlotsForDoctor,createSlotsForMonth,CronJob}
+
+
+module.exports={createSlotsForDoctor,createSlotsForMonth,CronJob,deleteRedundantSlots}
