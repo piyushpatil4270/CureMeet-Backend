@@ -50,6 +50,7 @@ const getSlots = async (req, res) => {
     ];
     const updatedSlots=timeSlots.map((element)=>{
       const index=appointmentTime.findIndex((el)=>el.slotTime===element.sqlTime)
+      console.log("Index is ",appointmentTime[index])
       if(index===-1) return {...element}
       else return {
         ...element,
