@@ -36,7 +36,7 @@ const getSlots = async (req, res) => {
     console.log("Slot id is ",appointmentDay)
     const appointmentTime=await timeSlot.findAll({
       where:{
-        daySlotId:(appointmentDay.id)-1
+        daySlotId:(appointmentDay.id)
       }
     })
     console.log("Appointments time is => ",appointmentTime)
