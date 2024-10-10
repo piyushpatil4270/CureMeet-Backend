@@ -18,7 +18,7 @@ router.post("/patient/signup",patientSignup)
 
 
 router.post("/doctor/profile",auth,doctorProfile)
-router.post("/patient/profile",auth,patientProfile)
+
 
 router.post("/doctor/signup",upload.single("file"),doctorSignup)
 

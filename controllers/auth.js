@@ -73,7 +73,7 @@ const doctorProfile = async (req, res, next) => {
 const doctorSignup = async (req, res, next) => {
   try {
     const transaction=await db.transaction()
-    const result=await handleDoctorSignup(req.body,req.user.id)
+    const result=await handleDoctorSignup(req.body)
     if(result===1) res.status(200).json("User with email already exist")
     res.status(202).json("Doctor registered succesfully");
   await transaction.commit()
