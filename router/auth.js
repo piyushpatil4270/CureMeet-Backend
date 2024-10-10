@@ -1,5 +1,5 @@
 const express=require("express")
-const { patientSignin, doctorProfile, doctorSignup, doctorSignin, patientDocument, getPatientDocuments, getPatientData, patientProfile } = require("../controllers/auth")
+const { patientSignin, doctorProfile, doctorSignup, doctorSignin, patientDocument, getPatientDocuments, getPatientData, patientProfile, patientSignup } = require("../controllers/auth")
 const router=express.Router()
 const auth=require("../middleware/auth")
 
@@ -14,6 +14,7 @@ router.post("/patient/signup",upload.single("file"),async(req,res,next)=>{
 
 
 router.post("/patient/signin",patientSignin)
+router.post("/patient/signup",patientSignup)
 
 
 router.post("/doctor/profile",auth,doctorProfile)
