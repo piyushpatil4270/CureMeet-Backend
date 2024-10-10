@@ -25,6 +25,7 @@ const patientSignup = async (req, res, next) => {
     const transaction=await db.transaction()
     const result=await handlePatientSignup(req.body)
     if (result===1) {
+      await transaction.rollback();
       return res.status(200).json("Email already registered");
     }
    
@@ -38,8 +39,9 @@ const patientSignup = async (req, res, next) => {
 };
 
 const patientSignin = async (req, res, next) => {
+  const transaction=await db.transaction()
   try {
-    const transaction=await db.transaction()
+  
    const result=await handlePatientSignin(req.body)
     if (result===1) {
       return res.status(200).json("User with email doesnt exist");
@@ -57,8 +59,9 @@ const patientSignin = async (req, res, next) => {
 };
 
 const doctorProfile = async (req, res, next) => {
+  const transaction=await db.transaction()
   try {
-    const transaction=await db.transaction()
+    
     const result=await handleDoctorProfile(req.user.id,req.body)
     if(result===1) return res.status(404).json("User not found")
     res.status(202).json(result)
