@@ -79,7 +79,7 @@ exports.handleDoctorProfile=async(userId,body)=>{
 exports.handleDoctorSignup=async(body,userId)=>{
     const { firstname, lastname, email, password, department } =body
     const doc = await doctors.findOne({ where: { email: email } });
-    if(!doc) return 1
+    if(doc) return 1
     const hashedPass=await bcrypt.hash(password,saltrounds)
     const startDate = moment.utc().startOf("month").toDate();
     const endDate = moment.utc().endOf("month").toDate();
