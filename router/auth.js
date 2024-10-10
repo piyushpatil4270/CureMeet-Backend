@@ -13,7 +13,7 @@ const upload = multer({ storage: storage });
 
 router.post("/patient/signin",patientSignin)
 
-router.post("/patient/signup",patientSignup)
+router.post("/patient/signup",upload.single("file"),patientSignup)
 
 
 router.post("/doctor/profile",auth,doctorProfile)

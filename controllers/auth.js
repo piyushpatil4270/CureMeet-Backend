@@ -21,13 +21,14 @@ function generateToken(id) {
 }
 
 const patientSignup = async (req, res, next) => {
+  const transaction=await db.transaction()
   try {
-    console.log("Patient signin up")
-    const transaction=await db.transaction()
+    console.log("Patient signin up ",req.body)
+    
     const result=await handlePatientSignup(req.body)
     if (result===1) {
       await transaction.rollback();
-      return res.status(200).json("Email already registered");
+      return res.status(400).json("Email already registered");
     }
    
     res.status(202).json("User registered succesfully");
@@ -45,9 +46,9 @@ const patientSignin = async (req, res, next) => {
   
    const result=await handlePatientSignin(req.body)
     if (result===1) {
-      return res.status(200).json("User with email doesnt exist");
+      return res.status(400).json("User with email doesnt exist");
     }
-    if (result===2) return res.status(201).json("Incorrect password");
+    if (result===2) return res.status(401).json("Incorrect password");
     res
       .status(202)
       .json(result);
@@ -79,7 +80,7 @@ const doctorSignup = async (req, res, next) => {
   try {
     
     const result=await handleDoctorSignup(req)
-    if(result===1) res.status(200).json("User with email already exist")
+    if(result===1) return res.status(400).json("User with email already exist")
     res.status(202).json("Doctor registered succesfully");
   await transaction.commit()
   } catch (error) {
@@ -93,8 +94,8 @@ const doctorSignin = async (req, res, next) => {
   try {
     const transaction=await db.transaction()
      const result=await handleDoctorSignin(req.body)
-     if(result===1) return res.status(200).json("User with email doesnt exist")
-    if(result===2) return res.status(201).json("Password doesnt match")
+     if(result===1) return res.status(400).json("User with email doesnt exist")
+    if(result===2) return res.status(401).json("Password doesnt match")
     res
       .status(202)
       .json(result);
