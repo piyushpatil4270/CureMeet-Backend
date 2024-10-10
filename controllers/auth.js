@@ -22,6 +22,7 @@ function generateToken(id) {
 
 const patientSignup = async (req, res, next) => {
   try {
+    console.log("Patient signin up")
     const transaction=await db.transaction()
     const result=await handlePatientSignup(req.body)
     if (result===1) {

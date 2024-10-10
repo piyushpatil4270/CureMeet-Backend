@@ -6,14 +6,13 @@ const auth=require("../middleware/auth")
 const multer=require("multer")
 const storage = multer.memoryStorage(); 
 const upload = multer({ storage: storage });
-router.post("/patient/signup",upload.single("file"),async(req,res,next)=>{
-    
-})
+
 
 
 
 
 router.post("/patient/signin",patientSignin)
+
 router.post("/patient/signup",patientSignup)
 
 
