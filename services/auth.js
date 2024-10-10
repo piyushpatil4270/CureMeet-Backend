@@ -76,8 +76,8 @@ exports.handleDoctorProfile=async(userId,body)=>{
 }
 
 
-exports.handleDoctorSignup=async(body,userId)=>{
-    const { firstname, lastname, email, password, department } =body
+exports.handleDoctorSignup=async(req,userId)=>{
+    const { firstname, lastname, email, password, department } =req.body
     const doc = await doctors.findOne({ where: { email: email } });
     if(doc) return 1
     const hashedPass=await bcrypt.hash(password,saltrounds)
