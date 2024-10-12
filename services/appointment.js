@@ -258,7 +258,7 @@ exports.handleAppontmentSuccessful=async(body,doctorId)=>{
       await prescriptions.create({
         appointmentId: appointmentId,
         doctorId: doctorId,
-        patientId: 1,
+        patientId: patientId,
         details: pres,
       });
     })
