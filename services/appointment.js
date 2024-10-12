@@ -246,7 +246,7 @@ const appt = await appointments.findOne({
 const prescs = await prescriptions.findAll({
   where: { appointmentId: appointmentId },
 });
-const myReview=await reviews.findOne({where:{appointmentId:appointmentId,patientId:1}})
+const myReview=await reviews.findOne({where:{appointmentId:appointmentId}})
 return { appointments: appt, prescriptions: prescs,review:myReview }
 }
 
